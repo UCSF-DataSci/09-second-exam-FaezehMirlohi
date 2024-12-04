@@ -1,4 +1,4 @@
-"DATASCI217 Final Exam, Question 2"
+"""DATASCI217 Final Exam, Question 2"""
 
 # Import libraries
 import pandas as pd
@@ -45,6 +45,7 @@ def main():
 
     # Check missing values
     print(f"Missing values:\n{df.isna().sum()}")
+    # No need to handle missing values, since there are none
 
     # Save the structurs dataframe as a csv file
     df.to_csv("updated_ms_data.csv", index=False)
