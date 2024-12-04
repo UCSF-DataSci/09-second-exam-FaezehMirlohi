@@ -54,12 +54,10 @@ def main():
     cost_anova_result = anova_lm(cost_result, type = 2)
   
 
-    # Calculate effect sizes
+    # Calculate effect sizes (Eta Squared)
     # Extract sums of squares
     ss_total = cost_anova_result['sum_sq'].sum()
     ss_factor = cost_anova_result.loc['insurance_type', 'sum_sq']
-
-    # Calculate Eta Squared
     eta_squared = ss_factor / ss_total
 
     # Advanced analysis 
@@ -78,6 +76,7 @@ def main():
         coefficients = age_education_result1.params
         conf_intervals = age_education_result1.conf_int()
         p_values = age_education_result1.pvalues
+
         for var in coefficients.index:
             coef = coefficients[var]
             ci_lower, ci_upper = conf_intervals.loc[var]
@@ -93,7 +92,6 @@ def main():
         p_values = age_education_result2.pvalues
 
         # Format results for fixed effects
-        fixed_effects_lines = []
         for var in fixed_effects.index:
             coef = fixed_effects[var]
             ci_lower, ci_upper = conf_intervals.loc[var]
@@ -126,12 +124,11 @@ def main():
         print(f"**ANOVA of visit cost based on insurance type:**\n", file = file)
         
         # Format results
-        for index, row in cost_anova_result.iterrows():
-            factor_df = row['df']
-            residual_df = cost_anova_result.loc['Residual', 'df']  
+        for index, row in cost_anova_result.iterrows(): 
             f_stat = row['F']
             p_val = row['PR(>F)']
             print(f"- {index} F = {f_stat:.2f}, p-value = {p_val:.2f}", file = file)
+        
         file.write("\n")
         print(f"- The effect size (Eta Squared) of insurance type is {eta_squared:.2f}, indicating that "
               f"{eta_squared * 100:.2f}% of the variance in visit cost is explained by insurance type.", file = file)
@@ -145,14 +142,14 @@ def main():
         p_values = interaction_result.pvalues
         r_squared = interaction_result.rsquared
         adj_r_squared = interaction_result.rsquared_adj
-        aic = interaction_result.aic
-        bic = interaction_result.bic
 
         for var in coefficients.index:
             coef = coefficients[var]
             ci_lower, ci_upper = conf_intervals.loc[var]
             p_val = p_values[var]
             print(f"- {var} Coefficient = {coef:.2f} (95% CI: [{ci_lower:.2f}, {ci_upper:.2f}], p-value = {p_val:.2f})", file = file)
+        print(f"- R-squared: {r_squared:.2f}", file = file)
+        print(f"- Adjusted R-squared: {adj_r_squared:.2f}", file = file)
 
 if __name__ == "__main__":
     main()
